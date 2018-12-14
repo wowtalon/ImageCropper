@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ImageCropper Demo</title>
+</head>
+<body>
+
+    <input type="file" onchange="upload(this.files[0])">
+    <button onclick="reset()">重置</button>
+    <button onclick="zoomin()">放大</button>
+    <button onclick="zoomout()">缩小</button>
+    <button onclick="clockwise()">顺时针旋转</button>
+    <button onclick="counterclockwise()">逆时针旋转</button>
+    <button onclick="up()">向上</button>
+    <button onclick="down()">向下</button>
+    <button onclick="left()">向左</button>
+    <button onclick="right()">向右</button>
+    <button onclick="crop()">剪裁</button>
+
+    <canvas id="avatar" width="300" height="300">
+
+    </canvas>
+
+    <img id="avt" src="" style="height: 300px; width: 300px;" alt="">
+
+    <script src="./image-cropper.js"></script>
+    <script>
+
+        var scale = 1;
+
+        function crop() {
+            document.getElementById("avt").src = cropper.getDataURL();
+        }
+
+        function reset() {
+            cropper.reset();
+        }
+
+        function up() {
+            cropper.moveBy(0, 10);
+        }
+
+        function down() {
+            cropper.moveBy(0, -10);
+        }
+
+        function left() {
+            cropper.moveBy(-10, 0);
+        }
+
+        function right() {
+            cropper.moveBy(10, 0);
+        }
+
+        function zoomin() {
+            scale += 0.1;
+            cropper.scale(scale);
+        }
+
+        function zoomout() {
+            scale -= 0.1;
+            scale = scale > 1 ? scale : 1;
+            cropper.scale(scale);
+        }
+
+        function clockwise() {
+            cropper.rotate(cropper.ROTATE_CLOCKWISE);
+        }
+
+        function counterclockwise() {
+            cropper.rotate(cropper.ROTATE_COUNTERCLOCKWISE);
+        }
+
+        function upload(file) {
+            cropper.loadFile(file);
+        }
+
+        
+
+        var cropper = ImageCropper.init({
+            el: 'avatar', 
+            width: 300, 
+            height: 300
+        });
+        // cropper.info();
+
+    </script>
+    
+</body>
+</html>
