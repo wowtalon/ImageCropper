@@ -44,16 +44,18 @@
         x: 0,
         y: 0
     };
+    // callbacks
+    var _callback_ = {};
 
     _img_.onload = function() {
+        if (typeof _callback_.onload != "undefined") {
+            _callback_.onload();
+        }
         _mode_ != MODE_PRODUCT && console.log('Load image success.');
         // get the size of img
         _img_size_.width = _img_.width;
         _img_size_.height = _img_.height;
-        // get the init scale
-        // _origin_scale_.x = _img_size_.width / _canvas_size_.width;
-        // _origin_scale_.y = _img_size_.height / _canvas_size_.height;
-        // _state_.sw = _state_.sh = _img_size_.width > _img_size_.height ? _img_size_.height : _img_size_.width;
+        
         if (_img_size_.width > _img_size_.height) {
             _state_.sw = _state_.sh = _img_size_.height;
             _state_.sy = 0;
@@ -80,6 +82,12 @@
         _canvas_size_.width = config.width;
         _canvas_size_.height = config.height;
         _ctx_ = _element_.getContext("2d");
+        typeof config.onload != "undefined" && (_callback_.onload = config.onload);
+        typeof config.onread != "undefined" && (_callback_.onread = config.onread);
+        typeof config.onscale != "undefined" && (_callback_.onscale = config.onscale);
+        typeof config.onmoveTo != "undefined" && (_callback_.onmoveTo = config.onmoveTo);
+        typeof config.onmoveBy != "undefined" && (_callback_.onmoveBy = config.onmoveBy);
+        typeof config.onrotate != "undefined" && (_callback_.onrotate = config.onrotate);
         return this;
     };
 
@@ -92,6 +100,9 @@
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function() {
+            if (typeof _callback_.onread != "undefined") {
+                _callback_.onread(reader.result);
+            }
             _mode_ != MODE_PRODUCT && console.log('Load data success.\nfilename:', file.name, '\nfilesize:', file.size, '\ntype:', file.type);
             _img_.src = reader.result;
         };
@@ -114,6 +125,9 @@
      * scaleX: the rate to zoom, e.g. canvas: 100*100, then 0.8 will zoom out to 80
      */
     var scale = function(scaleX, scaleY) {
+        if (typeof _callback_.onscale != "undefined") {
+            _callback_.onscale(scaleX, scaleY);
+        }
         _img_.src || _mode_ != MODE_PRODUCT && console.error("No image loaded!");
         scalex = scaleX || 1;
         scaley = scaleY || scalex;
@@ -127,6 +141,9 @@
     };
 
     var moveBy = function(x, y) {
+        if (typeof _callback_.onmoveBy != "undefined") {
+            _callback_.onmoveBy(x, y);
+        }
         _state_.movex = parseFloat(x);
         _state_.movey = parseFloat(y);
         _state_ = updateState(ACTION_MOVE_BY, _state_);
@@ -134,6 +151,9 @@
     };
 
     var moveTo = function(x, y) {
+        if (typeof _callback_.onmoveTo != "undefined") {
+            _callback_.onmoveTo(x, y);
+        }
         _state_.movex = parseFloat(x);
         _state_.movey = parseFloat(y);
         _state_ = updateState(ACTION_MOVE_TO, _state_);
@@ -141,6 +161,9 @@
     };
 
     var rotate = function(direction) {
+        if (typeof _callback_.onrotate != "undefined") {
+            _callback_.onrotate(direction);
+        }
         _state_ = updateState(direction, _state_);
         drawImage();
     };
@@ -230,17 +253,6 @@
         }
         _mode_ != MODE_PRODUCT && console.log("New state:", state);
         return state;
-    };
-
-    var info = function() {
-        console.log(_canvas_size_.width, _canvas_size_.height);
-    };
-
-    var get = function() {
-        return {
-            img: _img_,
-            ctx: _ctx_
-        };
     };
 
     var reset = function() {

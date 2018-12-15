@@ -83,7 +83,10 @@
         var cropper = ImageCropper.init({
             el: 'avatar', 
             width: 300, 
-            height: 300
+            height: 300,
+            onrotate: function(direction) {
+                console.log("rotate:", direction);
+            }
         });
         // cropper.info();
 
