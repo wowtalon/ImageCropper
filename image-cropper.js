@@ -1,3 +1,4 @@
+"use strict";
 (function() {
 
     var MODE_PRODUCT = 'product';
@@ -129,8 +130,8 @@
             _callback_.onscale(scaleX, scaleY);
         }
         _img_.src || _mode_ != MODE_PRODUCT && console.error("No image loaded!");
-        scalex = scaleX || 1;
-        scaley = scaleY || scalex;
+        var scalex = scaleX || 1;
+        var scaley = scaleY || scalex;
         _state_.scalex = scalex;
         _state_.scaley = scaley;
         var sw = _state_.sw;
